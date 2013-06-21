@@ -1,4 +1,3 @@
-modulation
-==========
+## Modulation
 
-Modulation of crystal structures using phonons obtained from DFT calculations.
+Modulation of the crystal structures using phonons obtained from DFT calculations.
