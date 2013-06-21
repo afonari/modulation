@@ -4,9 +4,9 @@
 
 import numpy as np
 import sys
-from phonopy.structure.atoms import Atoms
-from phonopy.interface.vasp import write_vasp
-from phonopy.units import VaspToTHz
+#from phonopy.structure.atoms import Atoms
+#from phonopy.interface.vasp import write_vasp
+from modulation.units import VaspToTHz
 
 class Modulation:
     def __init__(self,
