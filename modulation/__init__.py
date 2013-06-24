@@ -4,36 +4,57 @@
 
 import numpy as np
 import sys
-#from phonopy.structure.atoms import Atoms
+from structure.atoms import Atoms
 #from phonopy.interface.vasp import write_vasp
 from modulation.units import VaspToTHz
 
 class Modulation:
-    def __init__(self,
-                 dynamical_matrix,
-                 cell,
-                 dimension,
-                 phonon_modes,
-                 factor=VaspToTHz):
+#    def __init__(self,
+#                 dynamical_matrix,
+#                 cell,
+#                 dimension,
+#                 phonon_modes,
+#                 factor=VaspToTHz):
+#
+#        """Class describe atomic modulations
+#
+#        Atomic modulations corresponding to phonon modes are created.
+#        
+#        """
+#        self._dm = dynamical_matrix
+#        self._cell = cell
+#        self._phonon_modes = phonon_modes
+#        self._dimension = dimension
+#        self._factor = factor
+#
+#        self._delta_modulations = []
+#        self._eigvecs = []
+#        self._eigvals = []
+#        for ph_mode in self._phonon_modes:
+#            q, band_index, amplitude, argument = ph_mode
+#            self._dm.set_dynamical_matrix(q)
+#            eigval, eigvec = np.linalg.eigh(self._dm.get_dynamical_matrix())
+#            u = self._get_delta(eigvec[:, band_index], q)
+#            self._eigvecs.append(eigvec[:, band_index])
+#            self._eigvals.append(eigval[band_index].real)
+#            # Set phase of modulation so that phase of the element
+#            # that has maximum absolute value becomes 0.
+#            self._set_phase_of_modulation(u, argument)
+#            self._delta_modulations.append(u.reshape(-1,3) * amplitude)
 
-        """Class describe atomic modulations
-
-        Atomic modulations corresponding to phonon modes are created.
-        
-        """
-        self._dm = dynamical_matrix
+    def __init__(self, q, eigval, eigvec, cell, dimension, factor=VaspToTHz):
+#        self._dm = dynamical_matrix
         self._cell = cell
-        self._phonon_modes = phonon_modes
+#        self._phonon_modes = phonon_modes
         self._dimension = dimension
         self._factor = factor
-
+        print dimension
         self._delta_modulations = []
         self._eigvecs = []
         self._eigvals = []
-        for ph_mode in self._phonon_modes:
-            q, band_index, amplitude, argument = ph_mode
-            self._dm.set_dynamical_matrix(q)
-            eigval, eigvec = np.linalg.eigh(self._dm.get_dynamical_matrix())
+        for i in range(0, len(eigval)):
+            band_index, amplitude, argument = (i, 1.0, 0.0)
+#            eigval, eigvec = np.linalg.eigh(self._dm.get_dynamical_matrix())
             u = self._get_delta(eigvec[:, band_index], q)
             self._eigvecs.append(eigvec[:, band_index])
             self._eigvals.append(eigval[band_index].real)
@@ -42,19 +63,24 @@ class Modulation:
             self._set_phase_of_modulation(u, argument)
             self._delta_modulations.append(u.reshape(-1,3) * amplitude)
 
+            if i == 0:
+                self._phonon_modes = np.array([q, i, 1.0, 0.0])
+            else:
+                self._phonon_modes = np.vstack((self._phonon_modes, [q, i, 1.0, 0.0]))
+
     def write(self, filename="MPOSCAR"):
         deltas = []
         for i, delta_positions in enumerate(self._delta_modulations):
             cell = self._get_cell_with_modulation(delta_positions)
-            write_vasp((filename+"-%03d") % (i+1), cell, direct=True)
+            #write_vasp((filename+"-%03d") % (i+1), cell, direct=True)
             deltas.append(delta_positions)
     
         sum_of_deltas = np.sum(deltas, axis=0)
         cell = self._get_cell_with_modulation(sum_of_deltas)
-        write_vasp(filename, cell, direct=True)
+        #write_vasp(filename, cell, direct=True)
         no_modulations = np.zeros(sum_of_deltas.shape, dtype=complex)
-        cell = self._get_cell_with_modulation(no_modulations)
-        write_vasp(filename+"-orig", cell, direct=True)
+        #cell = self._get_cell_with_modulation(no_modulations)
+        #write_vasp(filename+"-orig", cell, direct=True)
 
     def get_modulations(self):
         modulations = []

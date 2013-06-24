@@ -1,22 +1,25 @@
-from interface.qe import read_qe
+from interface.qe import read_qe, read_qe_dynmat
 from structure.atoms import Atoms
 from structure.cells import get_supercell, Primitive, print_cell
+from modulation import Modulation
 import numpy as np
 
 symprec=1e-5
-supercell_matrix = [[2, 0, 0],[0, 2, 0],[0, 0, 2]] # q vectors (integers)
+supercell_matrix = [[6, 0, 0],[0, 6, 0],[0, 0, 6]] # q vectors (integers)
 primitive_matrix = [[1.0, 0.0, 0.0],[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]] # primitive axis
 
-unitcell = read_qe("scf.out") # returns Atoms object
-#print unitcell
+unitcell, alat = read_qe("scf.out") # returns Atoms object
+natoms = len(unitcell.get_scaled_positions())
 supercell = get_supercell(unitcell, supercell_matrix, symprec)
 inv_supercell_matrix = np.linalg.inv(supercell_matrix)
 primitive = Primitive(supercell, np.dot(inv_supercell_matrix, primitive_matrix), symprec)
 
-self._modulation = Modulation(self._dynamical_matrix,
-                                      self._primitive,
-                                      dimension=dimension,
-                                      phonon_modes=phonon_modes,
-                                      factor=self._factor)
+eigval, eigenvec, q = read_qe_dynmat("dynmat.dyn2", natoms, alat)
+q = [0.0, 0.0, 0.1666667]
+print eigval
+print eigenvec
+#mod = Modulation(q, eigval, eigenvec, primitive, [1, 1, 1])
+#mod.write_yaml()
+#mod.write()
 
 
