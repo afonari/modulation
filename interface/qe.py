@@ -46,4 +46,4 @@ def read_qe(filename, symbols=None):
                 positions.append([ float(p1.group(2)), float(p1.group(3)), float(p1.group(4)) ])
 
             atoms = Atoms(symbols=expanded_symbols, cell=cell, positions=positions)
-            print atoms
+            return atoms
