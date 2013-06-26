@@ -42,7 +42,7 @@ def read_qe(filename, symbols=None):
                 p1 = re.search(r'^\s*\d+\s+(\w+).+?(-*\d+\.\d+)\s+(-*\d+\.\d+)\s+(-*\d+\.\d+)', output.readline())
                 if not p1:
                     break
-                expanded_symbols.append( p1.group(1).upper() )
+                expanded_symbols.append( p1.group(1) )
                 positions.append([ float(p1.group(2)), float(p1.group(3)), float(p1.group(4)) ])
 
             atoms = Atoms(symbols=expanded_symbols, cell=cell, positions=positions)
@@ -75,7 +75,8 @@ def read_qe_dynmat(filename, natoms, alat):
                     break
 
                 temp = np.append(temp, [ float(p1.group(1))+1j*float(p1.group(2)), float(p1.group(3))+1j*float(p1.group(4)), float(p1.group(5))+1j*float(p1.group(6))])
-            if len(eigval) == 1: # first row of eigenvectors
+
+            if len(eigenvec) == 0: # first row of eigenvectors
                 eigenvec = temp
             else:
                 eigenvec = np.vstack((eigenvec, temp))

@@ -48,7 +48,6 @@ class Modulation:
 #        self._phonon_modes = phonon_modes
         self._dimension = dimension
         self._factor = factor
-        print dimension
         self._delta_modulations = []
         self._eigvecs = []
         self._eigvals = []
