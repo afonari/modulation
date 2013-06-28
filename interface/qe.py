@@ -39,7 +39,7 @@ def read_qe(filename, symbols=None):
             positions = []
             expanded_symbols = []
             while True:
-                p1 = re.search(r'^\s*\d+\s+(\w+).+?(-*\d+\.\d+)\s+(-*\d+\.\d+)\s+(-*\d+\.\d+)', output.readline())
+                p1 = re.search(r'^\s*(\w+)\s*(-*\d+\.\d+)\s+(-*\d+\.\d+)\s+(-*\d+\.\d+)', output.readline())
                 if not p1:
                     break
                 expanded_symbols.append( p1.group(1) )
